@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة كيمياء التعليمية</title>
+    <meta name="description" content="منصة تعليمية خاصة لشرح مفاهيم الكيمياء مع أقسام محمية بأكواد.">
+    <style>
+        body{font-family:Arial,sans-serif;margin:0;padding:0;background:#f4f4f9}header{background:#007BFF;color:#fff;text-align:center;padding:15px 0}nav{background:#343a40}nav ul{list-style:none;padding:0;display:flex;justify-content:center}nav ul li{padding:15px 25px}nav ul li a{color:#fff;text-decoration:none;font-size:16px}.container{padding:20px}.video-category{margin-bottom:20px;display:none}.video-category h2{color:#007BFF;margin-bottom:10px}.category-image{width:100%;max-height:200px;object-fit:cover;border-radius:5px;margin-bottom:10px}.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px}.video-item{background:#fff;border:1px solid #ddd;border-radius:5px;overflow:hidden;box-shadow:0 2px 5px rgba(0,0,0,.1);transition:transform .3s ease}.video-item:hover{transform:scale(1.05)}.video-item iframe{width:100%;height:150px}.video-item h3{padding:10px;font-size:16px;margin:0}.access-form{text-align:center;margin:50px 0}.access-form input{padding:10px;font-size:16px;margin-right:10px}.access-form button{padding:10px 20px;font-size:16px;background:#007BFF;color:#fff;border:none;cursor:pointer}.access-form button:hover{background:#0056b3}iframe{pointer-events:none}iframe:hover{pointer-events:auto}.sub-category-access{text-align:center;margin:20px 0}.sub-category-access input{padding:10px;font-size:16px;margin-right:10px}.sub-category-access button{padding:10px 20px;font-size:16px;background:#28a745;color:#fff;border:none;cursor:pointer}.sub-category-access button:hover{background:#218838}
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>مرحبًا بكم في منصة كيمياء التعليمية</h1>
+</header>
+
+<div class="access-form">
+    <h2>أدخل الكود للوصول إلى لوحة التحكم:</h2>
+    <input type="password" id="adminCode" placeholder="أدخل الكود هنا">
+    <button onclick="checkAdminCode()">دخول</button>
+</div>
+
+<nav>
+    <ul id="categoryNav"></ul>
+</nav>
+
+<div class="container" id="videoCategoriesContainer"></div>
+
+<div class="edit-section hidden" id="editSection">
+    <h3>لوحة التحكم (المدرب فقط)</h3>
+    <button onclick="addCategory()">إضافة قسم جديد</button>
+    <button onclick="deleteCategory()">حذف القسم الحالي</button>
+    <button onclick="renameCategory()">تغيير اسم القسم الحالي</button>
+    <button onclick="changeCategoryImage()">تغيير صورة القسم الحالي</button>
+    <button onclick="addSubCategory()">إضافة قسم فرعي جديد</button>
+    <button onclick="hideEditSection()">إغلاق</button>
+</div>
+
+<script>
+    const adminCode='admin123';let categories=[{title:'السنة الأولى',image:'https://via.placeholder.com/800x200?text=%D8%B3%D9%86%D8%A9+%D8%A7%D9%84%D9%88%D8%A7%D8%B1%D8%A9',subCategories:[{title:'الفصل الأول',code:'sec1',videos:[]},{title:'الفصل الثاني',code:'sec2',videos:[]}]}];function checkAdminCode(){const code=document.getElementById('adminCode').value;if(code===adminCode){document.querySelector('.access-form').style.display='none';document.getElementById('editSection').classList.remove('hidden');renderCategories()}else{alert('الكود غير صحيح. يرجى المحاولة مرة أخرى.')}}function renderCategories(){const categoryNav=document.getElementById('categoryNav');const container=document.getElementById('videoCategoriesContainer');categoryNav.innerHTML='';container.innerHTML='';categories.forEach((category,index)=>{const li=document.createElement('li');const a=document.createElement('a');a.href=#category${index};a.textContent=category.title;a.onclick=()=>selectCategory(index);li.appendChild(a);categoryNav.appendChild(li);const categoryDiv=document.createElement('div');categoryDiv.id=category${index};categoryDiv.classList.add('video-category');const categoryHeader=document.createElement('h2');categoryHeader.textContent=category.title;const categoryImage=document.createElement('img');categoryImage.src=category.image||'https://via.placeholder.com/800x200?text=%D8%B5%D9%88%D8%B1%D8%A9+%D8%A7%D9%84%D8%B9%D9%85%D9%88%D9%85';categoryImage.alt=category.title;categoryImage.classList.add('category-image');const subCategoriesDiv=document.createElement('div');subCategoriesDiv.classList.add('sub-categories');category.subCategories.forEach((subCategory,subIndex)=>{const subCategoryDiv=document.createElement('div');subCategoryDiv.classList.add('sub-category');subCategoryDiv.innerHTML=<h3>${subCategory.title}</h3><div class="sub-category-access"><input type="password" placeholder="أدخل الكود هنا" data-index="${index}" data-subindex="${subIndex}"><button onclick="checkSubCategoryCode(this)">دخول</button></div><div class="sub-category-videos" style="display:none;"></div>;subCategoriesDiv.appendChild(subCategoryDiv)});categoryDiv.appendChild(categoryHeader);categoryDiv.appendChild(categoryImage);categoryDiv.appendChild(subCategoriesDiv);container.appendChild(categoryDiv)})}function addCategory(){const newCategoryTitle=prompt('أدخل اسم القسم الجديد:');const newCategoryImage=prompt('أدخل رابط الصورة التعريفية:');if(newCategoryTitle&&newCategoryTitle.trim()!==''&&newCategoryImage&&newCategoryImage.trim()!==''){categories.push({title:newCategoryTitle,image:newCategoryImage,subCategories:[]});renderCategories()}}function deleteCategory(){const selectedCategoryIndex=getSelectedCategoryIndex();if(selectedCategoryIndex!==null){categories.splice(selectedCategoryIndex,1);renderCategories()}}function renameCategory(){const selectedCategoryIndex=getSelectedCategoryIndex();if(selectedCategoryIndex!==null){const newTitle=prompt('أدخل الاسم الجديد للقسم:',categories[selectedCategoryIndex].title);if(newTitle&&newTitle.trim()!==''){categories[selectedCategoryIndex].title=newTitle;renderCategories()}}}function changeCategoryImage(){const selectedCategoryIndex=getSelectedCategoryIndex();if(selectedCategoryIndex!==null){const newImage=prompt('أدخل رابط الصورة الجديدة:',categories[selectedCategoryIndex].image);if(newImage&&newImage.trim()!==''){categories[selectedCategoryIndex].image=newImage;renderCategories()}}}function addSubCategory(){const selectedCategoryIndex=getSelectedCategoryIndex();if(selectedCategoryIndex!==null){const newSubCategoryTitle=prompt('أدخل اسم القسم الفرعي الجديد:');const newSubCategoryCode=prompt('أدخل الكود الخاص بالقسم الفرعي:');if(newSubCategoryTitle&&newSubCategoryTitle.trim()!==''&&newSubCategoryCode&&newSubCategoryCode.trim()!==''){categories[selectedCategoryIndex].subCategories.push({title:newSubCategoryTitle,code:newSubCategoryCode,videos:[]});renderCategories()}}}function checkSubCategoryCode(button){const input=button.previousElementSibling;const categoryIndex=input.getAttribute('data-index');const subCategoryIndex=input.getAttribute('data-subindex');const enteredCode=input.value;if(enteredCode===categories[categoryIndex].subCategories[subCategoryIndex].code){const subCategoryVideosDiv=button.parentElement.nextElementSibling;subCategoryVideosDiv.style.display='block';subCategoryVideosDiv.innerHTML='<p>تم فتح القسم بنجاح!</p>'}else{alert('الكود غير صحيح. يرجى المحاولة مرة أخرى.')}}function getSelectedCategoryIndex(){const activeCategory=document.querySelector('nav ul li a.active');if(activeCategory){const index=Array.from(document.querySelectorAll('nav ul li a')).indexOf(activeCategory);return index}alert('يرجى تحديد قسم قبل إجراء هذه العملية.');return null}function selectCategory(index){document.querySelectorAll('nav ul li a').forEach(a=>a.classList.remove('active'));document.querySelector(nav ul li:nth-child(${index+1}) a).classList.add('active');scrollToCategory(index)}function scrollToCategory(index){const categoryElement=document.getElementById(category${index});if(categoryElement){categoryElement.scrollIntoView({behavior:'smooth'})}}function hideEditSection(){document.getElementById('editSection').classList.add('hidden')}renderCategories();
+</script>
+
+</body>
+</html>
